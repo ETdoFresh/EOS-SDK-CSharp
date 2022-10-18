@@ -17,19 +17,7 @@ namespace Epic.OnlineServices.Unity
             Instance._platform = new EOSPlatform();
             return Instance._platform.Interface;
         }
-
-        private void OnValidate()
-        {
-            EOSConfig.CheckIfConfigured();
-            EOSConfig.ValidateDynamicLibraryLocation();
-        }
-
-        protected override void Awake()
-        {
-            base.Awake();
-            _platform = new EOSPlatform();
-        }
-
+        
         private void OnDestroy()
         {
             EOSLogging.Dispose();

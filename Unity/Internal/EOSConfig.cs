@@ -1,5 +1,5 @@
-﻿using System.IO;
-using Epic.OnlineServices.Logging;
+﻿using System;
+using System.IO;
 using UnityEngine;
 
 namespace Epic.OnlineServices.Unity.Internal
@@ -17,9 +17,9 @@ namespace Epic.OnlineServices.Unity.Internal
         [SerializeField] private string clientId;
         [SerializeField] private string clientSecret;
         [SerializeField] private string encryptionKey;
-        [SerializeField] private LogLevel logLevel = LogLevel.Error;
-        [SerializeField] private bool warnOnMissingConfig = true;
+        [SerializeField] private bool skipOnMissingConfig;
         [SerializeField] private string dynamicLibraryDirectory;
+        private double _lastWarnTime = -1000;
 
         public static EOSConfig Instance => GetStaticInstance();
         public static string ProductName => Instance.productName;
@@ -30,9 +30,13 @@ namespace Epic.OnlineServices.Unity.Internal
         public static string ClientId => Instance.clientId;
         public static string ClientSecret => Instance.clientSecret;
         public static string EncryptionKey => Instance.encryptionKey;
-        public static LogLevel LogLevel => Instance.logLevel;
         public static string DynamicLibraryDirectory => Instance.dynamicLibraryDirectory;
-        private static bool IsConfigured => Instance != null && !string.IsNullOrEmpty(Instance.clientId);
+
+        private void OnValidate()
+        {
+            CheckIfConfigured();
+            ValidateDynamicLibraryLocation();
+        }
 
         private static EOSConfig GetStaticInstance()
         {
@@ -47,6 +51,8 @@ namespace Epic.OnlineServices.Unity.Internal
         {
             var instance = CreateInstance<EOSConfig>();
 #if UNITY_EDITOR
+            if (!_instance) _instance = instance;
+            instance.OnValidate();
             var currentDirectory = Directory.GetCurrentDirectory();
             var resourcesDirectory = Path.GetDirectoryName(DefaultResourcePath);
             Directory.CreateDirectory(Path.Combine(currentDirectory, resourcesDirectory));
@@ -55,11 +61,15 @@ namespace Epic.OnlineServices.Unity.Internal
             return instance;
         }
 
-        internal static void CheckIfConfigured()
+        private void CheckIfConfigured()
         {
 #if UNITY_EDITOR
-            if (Instance && !Instance.warnOnMissingConfig) return;
-            if (IsConfigured) return;
+            if (skipOnMissingConfig) return;
+            if (!string.IsNullOrEmpty(clientId)) return;
+            var currentTime = UnityEditor.EditorApplication.timeSinceStartup;
+            const int fiveMinutes = 5 * 60;
+            if (currentTime - _lastWarnTime < fiveMinutes) return;
+            _lastWarnTime = currentTime;
             const string title = "EOS SDK";
             const string message = "Please configure EOS SDK in the Project Settings > Epic Online Services window.";
             if (UnityEditor.EditorUtility.DisplayDialog(title, message, "OK"))
@@ -67,14 +77,14 @@ namespace Epic.OnlineServices.Unity.Internal
 #endif
         }
 
-        internal static void ValidateDynamicLibraryLocation()
+        private void ValidateDynamicLibraryLocation()
         {
 #if UNITY_EDITOR
-            if (!Instance) return;
             const string filename = "EOSSDK-Win64-Shipping";
             const string ext = ".dll";
-            var path = Path.Combine(Instance.dynamicLibraryDirectory.Replace('/', Path.PathSeparator), filename + ext);
-            if (!string.IsNullOrEmpty(Instance.dynamicLibraryDirectory) &&
+            var directory = dynamicLibraryDirectory?.Replace('/', Path.PathSeparator) ?? string.Empty;
+            var path = Path.Combine(directory, filename + ext);
+            if (!string.IsNullOrEmpty(dynamicLibraryDirectory) &&
                 File.Exists(path)) return;
 
             var files = Directory.GetFiles(Directory.GetCurrentDirectory(), filename + ".dll",
@@ -84,9 +94,9 @@ namespace Epic.OnlineServices.Unity.Internal
             if (files[0].StartsWith(Path.DirectorySeparatorChar.ToString()))
                 files[0] = files[0].Substring(1);
             files[0] = files[0].Replace(Path.DirectorySeparatorChar, '/');
-            var directory = Path.GetDirectoryName(files[0]);
-            if (string.IsNullOrEmpty(directory)) return;
-            Instance.dynamicLibraryDirectory = directory;
+            var newDirectory = Path.GetDirectoryName(files[0]);
+            if (string.IsNullOrEmpty(newDirectory)) return;
+            Instance.dynamicLibraryDirectory = newDirectory;
             UnityEditor.EditorUtility.SetDirty(Instance);
 #endif
         }
