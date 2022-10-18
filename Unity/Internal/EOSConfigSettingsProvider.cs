@@ -23,9 +23,8 @@ namespace Epic.OnlineServices.Unity.Internal
                     EditorGUILayout.PropertyField(settings.FindProperty("clientId"));
                     EditorGUILayout.PropertyField(settings.FindProperty("clientSecret"));
                     EditorGUILayout.PropertyField(settings.FindProperty("encryptionKey"));
-                    EditorGUILayout.PropertyField(settings.FindProperty("logLevel"));
                     EditorGUILayout.Space();
-                    EditorGUILayout.PropertyField(settings.FindProperty("warnOnMissingConfig"));
+                    EditorGUILayout.PropertyField(settings.FindProperty("skipOnMissingConfig"));
                     EditorGUILayout.Space();
                     EditorGUILayout.PropertyField(settings.FindProperty("dynamicLibraryDirectory"));
                     settings.ApplyModifiedProperties();
