@@ -1,0 +1,24 @@
+{
+  "name": "com.etdofresh.eos-sdk-unity",
+  "displayName": "Epic Online Services for Unity",
+  "version": "1.15.3",
+  "unity": "2019.4",
+  "description": "A minimal Unity wrapper around EOS-SDK.\n\nEpic Online Services (EOS) are free, cross-platform services created to enable fast, easy, and dependable high-quality game launching, operation, and scaling.",
+  "keywords": [
+    "Networking",
+    "Utils",
+    "Editor",
+    "Extensions"
+  ],
+  "samples": [
+    {
+      "displayName": "EOSConnectLoginDemo",
+      "description": "Example code testing and showing how to login into EOS Connect via coroutine.",
+      "path": "Samples~"
+    }
+  ],
+  "documentationUrl": "https://dev.epicgames.com/docs/game-services/services-overview",
+  "licensesUrl": "https://dev.epicgames.com/en-US/services/terms/agreements",
+  "changelogUrl": "https://dev.epicgames.com/docs/whats-new",
+  "type": "library"
+}
