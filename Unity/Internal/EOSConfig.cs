@@ -57,12 +57,14 @@ namespace Epic.OnlineServices.Unity.Internal
 
         internal static void CheckIfConfigured()
         {
+#if UNITY_EDITOR
             if (Instance && !Instance.warnOnMissingConfig) return;
             if (IsConfigured) return;
             const string title = "EOS SDK";
             const string message = "Please configure EOS SDK in the Project Settings > Epic Online Services window.";
             if (UnityEditor.EditorUtility.DisplayDialog(title, message, "OK"))
                 UnityEditor.SettingsService.OpenProjectSettings("Project/Epic Online Services");
+#endif
         }
 
         internal static void ValidateDynamicLibraryLocation()
@@ -74,8 +76,9 @@ namespace Epic.OnlineServices.Unity.Internal
             var path = Path.Combine(Instance.dynamicLibraryDirectory.Replace('/', Path.PathSeparator), filename + ext);
             if (!string.IsNullOrEmpty(Instance.dynamicLibraryDirectory) &&
                 File.Exists(path)) return;
-            
-            var files = Directory.GetFiles(Directory.GetCurrentDirectory(), filename + ".dll", SearchOption.AllDirectories);
+
+            var files = Directory.GetFiles(Directory.GetCurrentDirectory(), filename + ".dll",
+                SearchOption.AllDirectories);
             if (files.Length == 0) return;
             files[0] = files[0].Replace(Directory.GetCurrentDirectory(), "");
             if (files[0].StartsWith(Path.DirectorySeparatorChar.ToString()))

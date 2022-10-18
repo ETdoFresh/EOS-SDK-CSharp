@@ -1,4 +1,9 @@
-﻿using System;
+﻿#if UNITY_EDITOR
+	#define EOS_EDITOR
+    #define EOS_DYNAMIC_BINDINGS
+#endif
+
+using System;
 using Epic.OnlineServices.Platform;
 
 namespace Epic.OnlineServices.Unity.Internal
@@ -23,7 +28,9 @@ namespace Epic.OnlineServices.Unity.Internal
 #if UNITY_STANDALONE_WIN
             PlatformInterface.Shutdown();
 #endif
+#if EOS_DYNAMIC_BINDINGS
             Bindings.Unhook();
+#endif
             DLLLoader.FreeLibrary(_dllHandle);
             _dllHandle = default;
         }
@@ -38,8 +45,10 @@ namespace Epic.OnlineServices.Unity.Internal
         {
             if (_isInitialized) return Result.AlreadyConfigured;
 
+#if EOS_DYNAMIC_BINDINGS
             _dllHandle = DLLLoader.LoadLibrary(DLLPath.GetDLLPathByPlatform());
             Bindings.Hook(_dllHandle, DLLLoader.GetProcAddress);
+#endif
             var initializeOptions = new InitializeOptions
             {
                 AllocateMemoryFunction = default,
