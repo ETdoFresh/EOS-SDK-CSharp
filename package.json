@@ -10,6 +10,13 @@
     "Editor",
     "Extensions"
   ],
+  "samples": [
+    {
+      "displayName": "EOSConnectLoginDemo",
+      "description": "Example code testing and showing how to login into EOS Connect via coroutine.",
+      "path": "Samples~"
+    }
+  ],
   "documentationUrl": "https://dev.epicgames.com/docs/game-services/services-overview",
   "licensesUrl": "https://dev.epicgames.com/en-US/services/terms/agreements",
   "changelogUrl": "https://dev.epicgames.com/docs/whats-new",
