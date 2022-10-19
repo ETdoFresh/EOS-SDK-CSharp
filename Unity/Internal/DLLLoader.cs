@@ -5,7 +5,7 @@ namespace Epic.OnlineServices.Unity.Internal
 {
     internal static class DLLLoader
     {
-#if UNITY_STANDALONE_WIN
+#if UNITY_EDITOR_WIN
         [DllImport("Kernel32.dll", SetLastError = true)]
         public static extern IntPtr LoadLibrary(string lpFileName);
 
@@ -15,7 +15,7 @@ namespace Epic.OnlineServices.Unity.Internal
         [DllImport("Kernel32.dll", SetLastError = true)]
         public static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
         
-#elif UNITY_STANDALONE_LINUX
+#elif UNITY_EDITOR_LINUX
     [DllImport("libdl.so")]
     private static extern IntPtr dlopen(String fileName, int flags);
 
@@ -28,7 +28,7 @@ namespace Epic.OnlineServices.Unity.Internal
     [DllImport("libdl.so")]
     private static extern IntPtr dlerror();
 
-#elif UNITY_STANDALONE_OSX
+#elif UNITY_EDITOR_OSX
     [DllImport("libdl.dylib")]
     private static extern IntPtr dlopen(String fileName, int flags);
 
@@ -43,7 +43,7 @@ namespace Epic.OnlineServices.Unity.Internal
 
 #endif
 
-#if UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX
+#if UNITY_EDITOR_LINUX || UNITY_EDITOR_OSX
     public static IntPtr LoadLibrary(string lpFileName) => dlopen(lpFileName, 2);
 
     public static int FreeLibrary(IntPtr hLibModule) => dlclose(hLibModule);

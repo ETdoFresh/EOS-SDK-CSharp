@@ -25,9 +25,7 @@ namespace Epic.OnlineServices.Unity.Internal
         {
             Interface?.Release();
             Interface = null;
-#if UNITY_STANDALONE_WIN
             PlatformInterface.Shutdown();
-#endif
 #if EOS_DYNAMIC_BINDINGS
             Bindings.Unhook();
 #endif

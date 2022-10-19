@@ -55,8 +55,14 @@ namespace Epic.OnlineServices.Unity.Internal
             instance.OnValidate();
             var currentDirectory = Directory.GetCurrentDirectory();
             var resourcesDirectory = Path.GetDirectoryName(DefaultResourcePath);
-            Directory.CreateDirectory(Path.Combine(currentDirectory, resourcesDirectory));
-            UnityEditor.AssetDatabase.CreateAsset(instance, Path.Combine(resourcesDirectory, "EOSConfig.asset"));
+            var absoluteDirectory = Path.Combine(currentDirectory, resourcesDirectory);
+            Directory.CreateDirectory(absoluteDirectory);
+            var absolutePath = Path.Combine(absoluteDirectory, "EOSConfig.asset");
+            var relativePath = Path.Combine(resourcesDirectory, "EOSConfig.asset");
+            if (!File.Exists(absolutePath))
+                UnityEditor.AssetDatabase.CreateAsset(instance, relativePath);
+            else
+                instance = UnityEditor.AssetDatabase.LoadAssetAtPath<EOSConfig>(relativePath);
 #endif
             return instance;
         }
