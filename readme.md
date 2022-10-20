@@ -1,3 +1,10 @@
+# Discontinued
+
+Instead use  
+https://github.com/PlayEveryWare/eos_plugin_for_unity
+
+--------------------------------------------
+
 # EOS-SDK-Unity
 A minimal wrapper for Epic Online Services (EOS-SDK) for Unity.
 
